@@ -1,0 +1,501 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    /* Unidad de escala: 1 "píxel de Figma" = --k.
+       El diseño de escritorio está hecho a 1920px de ancho, así que a 1920px --k vale 1px
+       y a otros anchos todo se reduce o crece en la misma proporción.
+       (En tablet y móvil --k se redefine más abajo con su propio ancho de referencia.) */
+    --k: calc(100vw / 1920);
+
+    /* Colores base */
+    --primary-color: #F6ECDB;
+    --secundary-color: #FC825A;
+    --terciary-color: #F2C46D;
+
+    /* Botones */
+    --button-primary-color: #2975B8;
+    --button-secundary-color: #FC825A;
+    --button-hover-color: #F6ECDB;
+
+    /* Colores por categoría */
+    --estrategia-comunicacion-color: #2975B8;
+    --produccion-escrita-color: #F3BBB3;
+    --sistema-grafico-color: #FC825A;
+    --entretenimiento-digital-color: #F2C46D;
+    --produccion-audiovisual-color: #214C70;
+    --fotografia-color: #BBD9F2;
+
+    /* Indicador del carrusel móvil (segmentos inactivos) */
+    --indicador-inactivo-color: #9B9B9B;
+
+    /* Tipografía (Figma escritorio: 64 / 32 / 24 / 16 px), con un mínimo para que siga siendo legible */
+    --font-color: #214C70;
+    --font-type: 'Montserrat', sans-serif;
+    --font-h1-size: max(2rem, calc(64 * var(--k)));
+    --font-h2-size: max(1.1rem, calc(32 * var(--k)));
+    --font-h3-size: max(0.8rem, calc(24 * var(--k)));
+    --font-h4-size: max(0.75rem, calc(16 * var(--k)));
+
+    /* Forma de las tarjetas (medidas del diseño) */
+    --radio-arco: calc(264 * var(--k));
+    --radio-esquina: calc(24 * var(--k));
+}
+
+/* ---------- Base ---------- */
+html {
+    font-family: var(--font-type);
+    color: var(--font-color);
+    background-color: var(--primary-color);
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: calc(30 * var(--k));
+    padding: calc(38 * var(--k)) calc(42 * var(--k)) calc(46 * var(--k));
+}
+
+/* Mientras el popup está abierto, la página de fondo no se desplaza */
+body:has(.creditos[open]) {
+    overflow: hidden;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+h1 { font-size: var(--font-h1-size); font-weight: 700; line-height: 1.05; }
+h2 { font-size: var(--font-h2-size); font-weight: 400; line-height: 1.05; }
+h3 { font-size: var(--font-h3-size); font-weight: 700; text-transform: uppercase; line-height: normal; }
+h4 { font-size: var(--font-h4-size); font-weight: 700; text-transform: capitalize; line-height: normal; }
+
+/* ---------- Header ---------- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: calc(32 * var(--k));
+}
+
+.header__marca {
+    display: flex;
+    align-items: center;
+    gap: calc(32 * var(--k));
+}
+
+.header__logo {
+    display: block;
+    height: calc(164 * var(--k));
+    width: auto;
+}
+
+.header__titulos {
+    display: flex;
+    flex-direction: column;
+    gap: calc(16 * var(--k));
+    padding-left: calc(32 * var(--k));
+    border-left: max(2px, calc(3 * var(--k))) solid var(--secundary-color);
+}
+
+/* Botón de créditos (es un <button>, así que quitamos su estilo por defecto) */
+.header__creditos {
+    flex-shrink: 0;
+    width: max(2.75rem, calc(71 * var(--k)));
+    height: max(2.75rem, calc(71 * var(--k)));
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    transition: transform .2s ease;
+}
+
+.header__creditos:hover,
+.header__creditos:focus-visible {
+    transform: scale(1.08);
+}
+
+.header__creditos img {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* ---------- Categorías ---------- */
+.categorias {
+    display: grid;
+    /* 6 columnas exactamente iguales */
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: calc(21 * var(--k));
+}
+
+.categoria {
+    --fondo: var(--button-primary-color);
+    --texto: var(--primary-color);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-width: 0;
+    aspect-ratio: 289 / 799;              /* proporción de la tarjeta en Figma */
+    padding: calc(24 * var(--k));
+    background-color: var(--fondo);
+    color: var(--texto);
+    border-radius: var(--radio-esquina);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.categoria:hover,
+.categoria:focus-visible {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 24px rgb(33 76 112 / .25);
+}
+
+/* Arco: izquierda en las impares, derecha en las pares */
+.categoria:nth-child(odd)  { border-top-left-radius: var(--radio-arco); }
+.categoria:nth-child(even) { border-top-right-radius: var(--radio-arco); }
+
+/* Ícono: el SVG se usa como máscara y toma el color del texto de la tarjeta */
+.categoria__icono {
+    display: block;
+    flex-shrink: 0;
+    width: calc(208 * var(--k));
+    height: calc(208 * var(--k));
+    background-color: currentColor;
+    -webkit-mask: var(--icono) center / contain no-repeat;
+            mask: var(--icono) center / contain no-repeat;
+}
+
+.categoria__texto {
+    display: flex;
+    flex-direction: column;
+    gap: calc(16 * var(--k));
+    min-height: calc(94 * var(--k));      /* alto de 2 líneas: así todos los íconos quedan a la misma altura */
+    margin-top: calc(120 * var(--k));
+}
+
+.categoria__texto h3 {
+    overflow-wrap: anywhere;              /* red de seguridad si una palabra no cabe */
+}
+
+.categoria__flecha {
+    flex-shrink: 0;
+    width: calc(56 * var(--k));
+    height: calc(56 * var(--k));
+    margin-top: calc(57 * var(--k));
+}
+
+/* Un modificador por categoría: solo cambia fondo y color de texto */
+.categoria--estrategia-comunicacion { --fondo: var(--estrategia-comunicacion-color); --texto: var(--primary-color); }
+.categoria--produccion-escrita      { --fondo: var(--produccion-escrita-color);      --texto: var(--font-color); }
+.categoria--sistema-grafico         { --fondo: var(--sistema-grafico-color);         --texto: var(--primary-color); }
+.categoria--entretenimiento-digital { --fondo: var(--entretenimiento-digital-color); --texto: var(--font-color); }
+.categoria--produccion-audiovisual  { --fondo: var(--produccion-audiovisual-color);  --texto: var(--primary-color); }
+.categoria--fotografia              { --fondo: var(--fotografia-color);              --texto: var(--font-color); }
+
+/* En el diseño, "Entretenimiento digital" usa 23px para que quepa */
+.categoria--entretenimiento-digital h3 {
+    font-size: max(0.78rem, calc(23 * var(--k)));
+}
+
+/* Indicador y aviso de deslizar: solo existen en la versión móvil */
+.indicador,
+.deslizar {
+    display: none;
+}
+
+/* ---------- Popup de créditos (500 x 338 en Figma) ---------- */
+/* El popup usa tamaños fijos en rem (no depende de --k) para que el texto
+   se lea bien en cualquier pantalla. */
+.creditos {
+    /* El reset global quita el margin:auto que centra el <dialog>, hay que ponerlo de nuevo */
+    margin: auto;
+    width: min(31.25rem, calc(100vw - 2rem));
+    max-height: calc(100vh - 2rem);
+    overflow: auto;
+    padding: 0;                           /* el padding va en .creditos__contenido para que el clic en el fondo cierre bien */
+    border: 0;
+    border-radius: 1.5rem;
+    background-color: var(--primary-color);
+    color: var(--font-color);
+}
+
+.creditos::backdrop {
+    background-color: rgb(33 76 112 / .55);
+    backdrop-filter: blur(3px);
+}
+
+.creditos[open] {
+    animation: creditos-entrada .25s ease;
+}
+
+.creditos[open]::backdrop {
+    animation: creditos-fondo .25s ease;
+}
+
+@keyframes creditos-entrada {
+    from { opacity: 0; transform: translateY(1rem) scale(.97); }
+    to   { opacity: 1; transform: none; }
+}
+
+@keyframes creditos-fondo {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.creditos__contenido {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem 1.5rem 2.5rem;
+}
+
+.creditos__cabecera {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.creditos__logo {
+    display: block;
+    width: min(17.65rem, calc(100% - 7rem));   /* deja espacio al botón de cerrar en pantallas angostas */
+    height: auto;
+}
+
+.creditos__cerrar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--font-color);
+    cursor: pointer;
+    transition: color .2s ease, transform .2s ease;
+}
+
+.creditos__cerrar:hover,
+.creditos__cerrar:focus-visible {
+    color: var(--secundary-color);
+    transform: scale(1.08);
+}
+
+.creditos__cerrar svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.creditos__textos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.creditos__derechos {
+    font-weight: 700;
+    line-height: 1.05;
+}
+
+.creditos__subtitulo {
+    font-weight: 400;
+    line-height: 1.05;
+}
+
+.creditos__lista {
+    padding-left: 1.5rem;
+    list-style: disc;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .creditos[open],
+    .creditos[open]::backdrop {
+        animation: none;
+    }
+}
+
+/* ---------- Tablet ---------- */
+
+/* Hasta 900px: 3 columnas (el diseño se reescala a 960px de referencia) */
+@media (max-width: 900px) {
+    :root { --k: calc(100vw / 960); }
+
+    .categorias { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .header__marca   { flex-direction: column; align-items: flex-start; }
+    .header__titulos { padding-left: 0; border-left: 0; }
+}
+
+/* ---------- Móvil (frame Home_celular de Figma: 393 x 852) ---------- */
+
+/* Hasta 600px: las categorías pasan a un carrusel horizontal.
+   El diseño se reescala a 393px de referencia. */
+@media (max-width: 600px) {
+    :root {
+        --k: calc(100vw / 393);
+
+        --font-h1-size: max(1.75rem, calc(32 * var(--k)));
+        --font-h2-size: max(0.875rem, calc(16 * var(--k)));
+        --font-h3-size: max(1rem, calc(24 * var(--k)));
+        --font-h4-size: max(0.875rem, calc(16 * var(--k)));
+
+        --radio-arco: calc(251 * var(--k));
+    }
+
+    body {
+        gap: calc(23 * var(--k));
+        padding: calc(32 * var(--k)) calc(16 * var(--k)) calc(24 * var(--k));
+        overflow-x: hidden;
+    }
+
+    /* Header: logo a la izquierda, créditos a la derecha y el título debajo */
+    .header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: start;
+        row-gap: calc(20 * var(--k));
+        column-gap: calc(16 * var(--k));
+    }
+
+    .header__marca {
+        display: contents;                /* el logo y los títulos pasan a ser celdas del grid */
+    }
+
+    .header__logo {
+        grid-column: 1;
+        grid-row: 1;
+        height: calc(88 * var(--k));
+    }
+
+    .header__creditos {
+        grid-column: 2;
+        grid-row: 1;
+        width: max(2.75rem, calc(42 * var(--k)));
+        height: max(2.75rem, calc(42 * var(--k)));
+    }
+
+    .header__titulos {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        gap: calc(8.8 * var(--k));
+        padding-left: 0;
+        border-left: 0;
+    }
+
+    main {
+        display: flex;
+        flex-direction: column;
+        gap: calc(20 * var(--k));
+    }
+
+    /* Carrusel: las tarjetas van en fila y se desliza con el dedo.
+       Llega hasta los bordes de la pantalla para que se vea asomar la siguiente tarjeta. */
+    .categorias {
+        display: flex;
+        gap: calc(24 * var(--k));
+        margin-inline: calc(-16 * var(--k));
+        padding-inline: calc(16 * var(--k));
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: calc(16 * var(--k));
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .categorias::-webkit-scrollbar {
+        display: none;
+    }
+
+    .categoria {
+        flex: 0 0 calc(275 * var(--k));
+        width: calc(275 * var(--k));
+        height: calc(488 * var(--k));
+        aspect-ratio: auto;
+        padding: calc(24 * var(--k));
+        scroll-snap-align: start;
+    }
+
+    /* En pantalla táctil no hay hover: evitamos que la tarjeta se corte al "subir" */
+    .categoria:hover,
+    .categoria:focus-visible {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .categoria__icono {
+        width: calc(120 * var(--k));
+        height: calc(120 * var(--k));
+        align-self: center;
+    }
+
+    .categoria__texto {
+        margin-top: calc(24 * var(--k));
+        text-align: center;
+    }
+
+    .categoria__texto h3 {
+        white-space: nowrap;
+        overflow-wrap: normal;
+    }
+
+    .categoria__flecha {
+        margin-top: calc(52 * var(--k));
+    }
+
+    /* "Entretenimiento digital" es la palabra más larga: le damos un poco más de ancho útil */
+    .categoria--entretenimiento-digital {
+        padding-inline: calc(20 * var(--k));
+    }
+
+    /* Indicador: el segmento largo marca la tarjeta actual (lo actualiza carrusel.js) */
+    .indicador {
+        display: flex;
+        align-items: center;
+        gap: calc(12 * var(--k));
+    }
+
+    .indicador__marca {
+        display: block;
+        width: calc(12 * var(--k));
+        height: max(3px, calc(3.5 * var(--k)));
+        border-radius: 999px;
+        background-color: var(--indicador-inactivo-color);
+        transition: width .25s ease, background-color .25s ease;
+    }
+
+    .indicador__marca--activa {
+        width: calc(32 * var(--k));
+        background-color: var(--font-color);
+    }
+
+    /* Aviso de deslizar */
+    .deslizar {
+        display: flex;
+        align-items: center;
+        font-size: var(--font-h4-size);
+        line-height: 1.05;
+    }
+
+    .deslizar p {
+        width: calc(290 * var(--k));
+    }
+
+    .deslizar svg {
+        flex-shrink: 0;
+        width: calc(56 * var(--k));
+        height: calc(32 * var(--k));
+    }
+}

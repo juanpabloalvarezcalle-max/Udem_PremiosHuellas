@@ -1,11 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PremiosHuella</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Museo de los nominados | Premios Huella 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles/style.css">
+<script src="/scripts/creditos.js" defer></script>
+<script src="/scripts/carrusel.js" defer></script>
 </head>
 <body>
-    <p>Work In Progress</p>
+
+<!-- Iconos reutilizables (usan currentColor, así se les cambia el color desde CSS) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<!-- Círculo con flecha hacia la derecha -->
+<symbol id="icono-flecha" viewBox="0 0 56 56">
+<circle cx="28" cy="28" r="22" fill="none" stroke="currentColor" stroke-width="3"/>
+<path d="M17 28h22M30 19l9 9-9 9" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<!-- Círculo con X (cerrar) -->
+<symbol id="icono-cerrar" viewBox="0 0 56 56">
+<circle cx="28" cy="28" r="22" fill="none" stroke="currentColor" stroke-width="3"/>
+<path d="M20 20l16 16M36 20L20 36" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+</symbol>
+<!-- Flecha larga hacia la derecha (aviso de deslizar en móvil) -->
+<symbol id="icono-flecha-larga" viewBox="0 0 56 32">
+<path d="M4 16h46M37 4l13 12-13 12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+</svg>
+
+<header class="header">
+<div class="header__marca">
+<img class="header__logo" src="/imgs/logoHuella.svg" alt="Premios Huella 2026">
+<div class="header__titulos">
+<h1>Museo de los nominados</h1>
+<h2>Elige una categoría para explorar a los proyectos nominados.</h2>
+</div>
+</div>
+
+<!-- Botón que abre el popup de créditos -->
+<button class="header__creditos" type="button" aria-label="Ver créditos" aria-haspopup="dialog" data-abrir-creditos>
+<img src="/imgs/Creditos.svg" alt="">
+</button>
+</header>
+
+<main>
+<nav class="categorias" aria-label="Categorías de los premios">
+
+<a class="categoria categoria--estrategia-comunicacion" href="categorias/estrategia-comunicacion.html">
+<span class="categoria__icono" style="--icono: url('/imgs/iconoCategoria_estrategia.svg')" aria-hidden="true"></span>
+<div class="categoria__texto">
+<h3>Estrategia de<br>comunicación</h3>
+<h4>6 nominados</h4>
+</div>
+<svg class="categoria__flecha" aria-hidden="true"><use href="#icono-flecha"/></svg>
+</a>
+
+<a class="categoria categoria--produccion-escrita" href="categorias/produccion-escrita.html">
+<span class="categoria__icono" style="--icono: url('/imgs/iconoCategoria_escrita.svg')" aria-hidden="true"></span>
+<div class="categoria__texto">
+<h3>Producción<br>escrita</h3>
+<h4>6 nominados</h4>
+</div>
+<svg class="categoria__flecha" aria-hidden="true"><use href="#icono-flecha"/></svg>
+</a>
+
+<a class="categoria categoria--sistema-grafico" href="categorias/sistema-grafico.html">
+<span class="categoria__icono" style="--icono: url('/imgs/iconoCategoria_grafico.svg')" aria-hidden="true"></span>
+<div class="categoria__texto">
+<h3>Sistema<br>gráfico</h3>
+<h4>6 nominados</h4>
+</div>
+<svg class="categoria__flecha" aria-hidden="true"><use href="#icono-flecha"/></svg>
+</a>
+
+<a class="categoria categoria--entretenimiento-digital" href="categorias/entretenimiento-digital.html">
+<span class="categoria__icono" style="--icono: url('/imgs/iconoCategoria_entretenimiento.svg')" aria-hidden="true"></span>
+<div class="categoria__texto">
+<h3>Entretenimiento<br>digital</h3>
+<h4>6 nominados</h4>
+</div>
+<svg class="categoria__flecha" aria-hidden="true"><use href="#icono-flecha"/></svg>
+</a>
+
+<a class="categoria categoria--produccion-audiovisual" href="categorias/produccion-audiovisual.html">
+<span class="categoria__icono" style="--icono: url('/imgs/iconoCategoria_audiovisual.svg')" aria-hidden="true"></span>
+<div class="categoria__texto">
+<h3>Producción<br>audiovisual</h3>
+<h4>6 nominados</h4>
+</div>
+<svg class="categoria__flecha" aria-hidden="true"><use href="#icono-flecha"/></svg>
+</a>
+
+<a class="categoria categoria--fotografia" href="categorias/fotografia.html">
+<span class="categoria__icono" style="--icono: url('/imgs/iconoCategoria_foto.svg')" aria-hidden="true"></span>
+<div class="categoria__texto">
+<h3>Fotografía</h3>
+<h4>12 nominados</h4>
+</div>
+<svg class="categoria__flecha" aria-hidden="true"><use href="#icono-flecha"/></svg>
+</a>
+
+</nav>
+
+<!-- Solo se ven en móvil: indicador de la categoría actual y aviso de deslizar -->
+<div class="indicador" aria-hidden="true">
+<span class="indicador__marca indicador__marca--activa"></span>
+<span class="indicador__marca"></span>
+<span class="indicador__marca"></span>
+<span class="indicador__marca"></span>
+<span class="indicador__marca"></span>
+<span class="indicador__marca"></span>
+</div>
+
+<div class="deslizar">
+<p>Desliza para ver todas las categorías</p>
+<svg aria-hidden="true"><use href="#icono-flecha-larga"/></svg>
+</div>
+</main>
+
+<!-- Popup de créditos -->
+<dialog class="creditos" id="dialogo-creditos" aria-labelledby="creditos-titulo">
+<div class="creditos__contenido">
+
+<div class="creditos__cabecera">
+<img class="creditos__logo" src="/imgs/logoHuella.svg" alt="Premios Huella 2026">
+<button class="creditos__cerrar" type="button" aria-label="Cerrar créditos" data-cerrar-creditos>
+<svg aria-hidden="true"><use href="#icono-cerrar"/></svg>
+</button>
+</div>
+
+<div class="creditos__textos">
+<p class="creditos__derechos" id="creditos-titulo">Todos los derechos reservados.</p>
+<p class="creditos__subtitulo">Sitio web desarrollado por:</p>
+<ul class="creditos__lista">
+<li>Juan Pablo Álvarez Calle</li>
+<li>Alexander Ortiz</li>
+<li>Manuela Jorge Agudelo</li>
+</ul>
+</div>
+
+</div>
+</dialog>
+
 </body>
 </html>
