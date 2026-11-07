@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es" style="--color-entrada: var(--entretenimiento-digital-color)">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entretenimiento digital | Premios Huella 2026</title>
+<!-- Si se llegó desde la portada (clic en una categoría), la página arranca cubierta con el color de la categoría y lo va descubriendo -->
+<script>try { if (sessionStorage.getItem('huella-transicion')) { sessionStorage.removeItem('huella-transicion'); document.documentElement.classList.add('viene-de-portada'); } } catch (e) {}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/style.css">
+</head>
+<body class="pagina pagina--entretenimiento-digital">
+
+<!-- Icono reutilizable (el de "volver" es la misma flecha, volteada desde CSS) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="icono-flecha" viewBox="0 0 56 56">
+<circle cx="28" cy="28" r="22" fill="none" stroke="currentColor" stroke-width="3"/>
+<path d="M17 28h22M30 19l9 9-9 9" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+</svg>
+
+<header class="pagina__cabecera">
+<a class="pagina__volver" href="../index.html">
+<svg aria-hidden="true"><use href="#icono-flecha"/></svg>
+<span>Categorías</span>
+</a>
+<h1>Entretenimiento digital</h1>
+</header>
+
+<main class="proyectos">
+<article class="proyecto">
+<img class="proyecto__imagen" src="../imgs/PlaceholderLC.png" alt="">
+<h2 class="proyecto__nombre">LAPÜ: El espíritu de los sueños</h2>
+</article>
+
+<article class="proyecto">
+<img class="proyecto__imagen" src="../imgs/PlaceholderLC.png" alt="">
+<h2 class="proyecto__nombre">DERMALIS: Triora el velo atemporal</h2>
+</article>
+
+<article class="proyecto">
+<img class="proyecto__imagen" src="../imgs/PlaceholderLC.png" alt="">
+<h2 class="proyecto__nombre">PIEL Y ENGRANAJES</h2>
+</article>
+
+<article class="proyecto">
+<img class="proyecto__imagen" src="../imgs/PlaceholderLC.png" alt="">
+<h2 class="proyecto__nombre">Before the Dawn project</h2>
+</article>
+
+<article class="proyecto">
+<img class="proyecto__imagen" src="../imgs/PlaceholderLC.png" alt="">
+<h2 class="proyecto__nombre">Forja de los Mártires</h2>
+</article>
+
+<article class="proyecto">
+<img class="proyecto__imagen" src="../imgs/PlaceholderLC.png" alt="">
+<h2 class="proyecto__nombre">Museo IE Héctor Abad Gómez</h2>
+</article>
+</main>
+
+</body>
+</html>

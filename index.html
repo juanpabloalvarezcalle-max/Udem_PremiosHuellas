@@ -8,10 +8,29 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles/style.css">
+<!-- Oculta lo que se va a animar para que no "parpadee" antes de la entrada, y muestra la pantalla de carga
+     la primera vez de la visita. Si la persona pidió menos movimiento no se oculta nada, y a los 9 s todo se muestra pase lo que pase. -->
+<script>
+(function () {
+    var d = document.documentElement;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    d.classList.add('con-animaciones');
+    try { if (!sessionStorage.getItem('huella-carga')) d.classList.add('con-carga'); } catch (e) { d.classList.add('con-carga'); }
+    setTimeout(function () { d.classList.remove('con-animaciones', 'con-carga'); }, 9000);
+})();
+</script>
+<script src="/scripts/vendor/gsap.min.js" defer></script>
 <script src="/scripts/creditos.js" defer></script>
 <script src="/scripts/carrusel.js" defer></script>
+<script src="/scripts/animaciones.js" defer></script>
 </head>
 <body>
+
+<!-- Pantalla de carga (se ve solo si <html> tiene la clase con-carga) -->
+<div class="carga" aria-hidden="true">
+<span class="carga__numero">0%</span>
+<span class="carga__linea"></span>
+</div>
 
 <!-- Iconos reutilizables (usan currentColor, así se les cambia el color desde CSS) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -50,57 +69,69 @@
 <nav class="categorias" aria-label="Categorías de los premios">
 
 <a class="categoria categoria--estrategia-comunicacion" href="categorias/estrategia-comunicacion.html">
+<div class="categoria__cara">
 <span class="categoria__icono" style="--icono: url('/imgs/iconoCategoria_estrategia.svg')" aria-hidden="true"></span>
 <div class="categoria__texto">
 <h3>Estrategia de<br>comunicación</h3>
 <h4>6 nominados</h4>
 </div>
 <svg class="categoria__flecha" aria-hidden="true"><use href="#icono-flecha"/></svg>
+</div>
 </a>
 
 <a class="categoria categoria--produccion-escrita" href="categorias/produccion-escrita.html">
+<div class="categoria__cara">
 <span class="categoria__icono" style="--icono: url('/imgs/iconoCategoria_escrita.svg')" aria-hidden="true"></span>
 <div class="categoria__texto">
 <h3>Producción<br>escrita</h3>
 <h4>6 nominados</h4>
 </div>
 <svg class="categoria__flecha" aria-hidden="true"><use href="#icono-flecha"/></svg>
+</div>
 </a>
 
 <a class="categoria categoria--sistema-grafico" href="categorias/sistema-grafico.html">
+<div class="categoria__cara">
 <span class="categoria__icono" style="--icono: url('/imgs/iconoCategoria_grafico.svg')" aria-hidden="true"></span>
 <div class="categoria__texto">
 <h3>Sistema<br>gráfico</h3>
 <h4>6 nominados</h4>
 </div>
 <svg class="categoria__flecha" aria-hidden="true"><use href="#icono-flecha"/></svg>
+</div>
 </a>
 
 <a class="categoria categoria--entretenimiento-digital" href="categorias/entretenimiento-digital.html">
+<div class="categoria__cara">
 <span class="categoria__icono" style="--icono: url('/imgs/iconoCategoria_entretenimiento.svg')" aria-hidden="true"></span>
 <div class="categoria__texto">
 <h3>Entretenimiento<br>digital</h3>
 <h4>6 nominados</h4>
 </div>
 <svg class="categoria__flecha" aria-hidden="true"><use href="#icono-flecha"/></svg>
+</div>
 </a>
 
 <a class="categoria categoria--produccion-audiovisual" href="categorias/produccion-audiovisual.html">
+<div class="categoria__cara">
 <span class="categoria__icono" style="--icono: url('/imgs/iconoCategoria_audiovisual.svg')" aria-hidden="true"></span>
 <div class="categoria__texto">
 <h3>Producción<br>audiovisual</h3>
 <h4>6 nominados</h4>
 </div>
 <svg class="categoria__flecha" aria-hidden="true"><use href="#icono-flecha"/></svg>
+</div>
 </a>
 
 <a class="categoria categoria--fotografia" href="categorias/fotografia.html">
+<div class="categoria__cara">
 <span class="categoria__icono" style="--icono: url('/imgs/iconoCategoria_foto.svg')" aria-hidden="true"></span>
 <div class="categoria__texto">
 <h3>Fotografía</h3>
 <h4>12 nominados</h4>
 </div>
 <svg class="categoria__flecha" aria-hidden="true"><use href="#icono-flecha"/></svg>
+</div>
 </a>
 
 </nav>

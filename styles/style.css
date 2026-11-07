@@ -43,6 +43,9 @@
     /* Forma de las tarjetas (medidas del diseño) */
     --radio-arco: calc(264 * var(--k));
     --radio-esquina: calc(24 * var(--k));
+
+    /* Perspectiva del grupo de tarjetas: con ella animaciones.js curva las tarjetas (como un cilindro) */
+    --perspectiva: calc(1500 * var(--k));
 }
 
 /* ---------- Base ---------- */
@@ -132,17 +135,25 @@ h4 { font-size: var(--font-h4-size); font-weight: 700; text-transform: capitaliz
     /* 6 columnas exactamente iguales */
     grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: calc(21 * var(--k));
+    perspective: var(--perspectiva);      /* para la curvatura 3D de animaciones.js */
 }
 
 .categoria {
     --fondo: var(--button-primary-color);
     --texto: var(--primary-color);
 
+    /* El <a> es solo la "caja" (tamaño y posición en la fila/carrusel, donde engancha el snap).
+       Lo que se ve y se inclina en 3D es .categoria__cara: así la curvatura no mueve los puntos de snap. */
+    display: block;
+    min-width: 0;
+    aspect-ratio: 289 / 799;              /* proporción de la tarjeta en Figma */
+}
+
+.categoria__cara {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    min-width: 0;
-    aspect-ratio: 289 / 799;              /* proporción de la tarjeta en Figma */
+    height: 100%;
     padding: calc(24 * var(--k));
     background-color: var(--fondo);
     color: var(--texto);
@@ -150,15 +161,15 @@ h4 { font-size: var(--font-h4-size); font-weight: 700; text-transform: capitaliz
     transition: transform .2s ease, box-shadow .2s ease;
 }
 
-.categoria:hover,
-.categoria:focus-visible {
+.categoria:hover .categoria__cara,
+.categoria:focus-visible .categoria__cara {
     transform: translateY(-6px);
     box-shadow: 0 10px 24px rgb(33 76 112 / .25);
 }
 
 /* Arco: izquierda en las impares, derecha en las pares */
-.categoria:nth-child(odd)  { border-top-left-radius: var(--radio-arco); }
-.categoria:nth-child(even) { border-top-right-radius: var(--radio-arco); }
+.categoria:nth-child(odd)  .categoria__cara { border-top-left-radius: var(--radio-arco); }
+.categoria:nth-child(even) .categoria__cara { border-top-right-radius: var(--radio-arco); }
 
 /* Ícono: el SVG se usa como máscara y toma el color del texto de la tarjeta */
 .categoria__icono {
@@ -191,12 +202,12 @@ h4 { font-size: var(--font-h4-size); font-weight: 700; text-transform: capitaliz
 }
 
 /* Un modificador por categoría: solo cambia fondo y color de texto */
-.categoria--estrategia-comunicacion { --fondo: var(--estrategia-comunicacion-color); --texto: var(--primary-color); }
-.categoria--produccion-escrita      { --fondo: var(--produccion-escrita-color);      --texto: var(--font-color); }
-.categoria--sistema-grafico         { --fondo: var(--sistema-grafico-color);         --texto: var(--primary-color); }
-.categoria--entretenimiento-digital { --fondo: var(--entretenimiento-digital-color); --texto: var(--font-color); }
-.categoria--produccion-audiovisual  { --fondo: var(--produccion-audiovisual-color);  --texto: var(--primary-color); }
-.categoria--fotografia              { --fondo: var(--fotografia-color);              --texto: var(--font-color); }
+.categoria--estrategia-comunicacion, .pagina--estrategia-comunicacion { --fondo: var(--estrategia-comunicacion-color); --texto: var(--primary-color); }
+.categoria--produccion-escrita, .pagina--produccion-escrita      { --fondo: var(--produccion-escrita-color);      --texto: var(--font-color); }
+.categoria--sistema-grafico, .pagina--sistema-grafico         { --fondo: var(--sistema-grafico-color);         --texto: var(--primary-color); }
+.categoria--entretenimiento-digital, .pagina--entretenimiento-digital { --fondo: var(--entretenimiento-digital-color); --texto: var(--font-color); }
+.categoria--produccion-audiovisual, .pagina--produccion-audiovisual  { --fondo: var(--produccion-audiovisual-color);  --texto: var(--primary-color); }
+.categoria--fotografia, .pagina--fotografia              { --fondo: var(--fotografia-color);              --texto: var(--font-color); }
 
 /* En el diseño, "Entretenimiento digital" usa 23px para que quepa */
 .categoria--entretenimiento-digital h3 {
@@ -207,6 +218,74 @@ h4 { font-size: var(--font-h4-size); font-weight: 700; text-transform: capitaliz
 .indicador,
 .deslizar {
     display: none;
+}
+
+/* ---------- Animaciones (GSAP, ver scripts/animaciones.js) ---------- */
+
+/* Antes de la entrada, lo que se anima empieza oculto (la clase la pone y la quita el JS) */
+html.con-animaciones :is(.header__logo, .header__titulos > *, .header__creditos, .categoria, .indicador, .deslizar) {
+    opacity: 0;
+}
+
+/* Con GSAP activo, él mueve y curva las tarjetas (transform): la transición del CSS solo queda para la sombra,
+   si no se pelearía con él y las tarjetas irían "arrastradas". */
+html.gsap-activo .categoria__cara {
+    transition: box-shadow .2s ease;
+}
+
+/* Clic en una categoría: el color se expande desde el punto del clic (el clip-path lo anima animaciones.js) */
+.relleno {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    pointer-events: none;
+}
+
+/* Pantalla de carga (solo la primera vez de cada visita): una línea que crece desde el centro con el porcentaje */
+.carga {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    place-content: center;
+    justify-items: center;
+    gap: calc(14 * var(--k));
+    background-color: var(--primary-color);
+    color: var(--font-color);
+    font-size: max(0.75rem, calc(16 * var(--k)));
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;   /* los dígitos no "bailan" mientras cuenta */
+}
+
+html.con-carga .carga {
+    display: grid;
+}
+
+html.con-carga body {
+    overflow: hidden;
+}
+
+.carga__linea {
+    display: block;
+    width: min(60vw, calc(560 * var(--k)));
+    height: max(2px, calc(3 * var(--k)));
+    border-radius: 999px;
+    background-color: var(--secundary-color);
+    transform: scaleX(0);
+}
+
+/* Máscaras de texto: cada línea queda dentro de una caja con overflow oculto para poder "subirla" desde abajo.
+   El padding y el margen negativo se compensan: el texto ocupa exactamente el mismo espacio que antes
+   (y no se cortan las letras con cola, como la "g" o la "j"). */
+.mascara {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.14em;
+    margin-bottom: -0.14em;
+}
+
+.mascara__texto {
+    display: block;
 }
 
 /* ---------- Popup de créditos (500 x 338 en Figma) ---------- */
@@ -327,25 +406,16 @@ h4 { font-size: var(--font-h4-size); font-weight: 700; text-transform: capitaliz
     }
 }
 
-/* ---------- Tablet ---------- */
+/* ---------- Tablet y móvil ---------- */
 
-/* Hasta 900px: 3 columnas (el diseño se reescala a 960px de referencia) */
-@media (max-width: 900px) {
-    :root { --k: calc(100vw / 960); }
-
-    .categorias { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-
-    .header__marca   { flex-direction: column; align-items: flex-start; }
-    .header__titulos { padding-left: 0; border-left: 0; }
-}
-
-/* ---------- Móvil (frame Home_celular de Figma: 393 x 852) ---------- */
-
-/* Hasta 600px: las categorías pasan a un carrusel horizontal.
-   El diseño se reescala a 393px de referencia. */
-@media (max-width: 600px) {
+/* Hasta 1024px (tablet y móvil) se usa el mismo diseño del frame móvil de Figma
+   (Home_celular): header en dos filas, categorías en carrusel, indicador y aviso de deslizar.
+   Lo único que cambia entre tablet y móvil es la escala (--k) de cada rango. */
+@media (max-width: 1024px) {
     :root {
-        --k: calc(100vw / 393);
+        /* Tablet: referencia de 600px de ancho. Se limita también por el alto
+           (852 = alto del frame móvil) para que en horizontal el carrusel quepa sin scroll vertical. */
+        --k: min(calc(100vw / 600), calc(100vh / 852));
 
         --font-h1-size: max(1.75rem, calc(32 * var(--k)));
         --font-h2-size: max(0.875rem, calc(16 * var(--k)));
@@ -353,6 +423,7 @@ h4 { font-size: var(--font-h4-size); font-weight: 700; text-transform: capitaliz
         --font-h4-size: max(0.875rem, calc(16 * var(--k)));
 
         --radio-arco: calc(251 * var(--k));
+        --perspectiva: calc(900 * var(--k));
     }
 
     body {
@@ -408,6 +479,8 @@ h4 { font-size: var(--font-h4-size); font-weight: 700; text-transform: capitaliz
         gap: calc(24 * var(--k));
         margin-inline: calc(-16 * var(--k));
         padding-inline: calc(16 * var(--k));
+        margin-block: calc(-40 * var(--k));   /* espacio extra arriba y abajo: al curvarse, el borde cercano de la tarjeta crece */
+        padding-block: calc(40 * var(--k));
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         scroll-padding-inline: calc(16 * var(--k));
@@ -424,13 +497,12 @@ h4 { font-size: var(--font-h4-size); font-weight: 700; text-transform: capitaliz
         width: calc(275 * var(--k));
         height: calc(488 * var(--k));
         aspect-ratio: auto;
-        padding: calc(24 * var(--k));
         scroll-snap-align: start;
     }
 
     /* En pantalla táctil no hay hover: evitamos que la tarjeta se corte al "subir" */
-    .categoria:hover,
-    .categoria:focus-visible {
+    .categoria:hover .categoria__cara,
+    .categoria:focus-visible .categoria__cara {
         transform: none;
         box-shadow: none;
     }
@@ -456,7 +528,7 @@ h4 { font-size: var(--font-h4-size); font-weight: 700; text-transform: capitaliz
     }
 
     /* "Entretenimiento digital" es la palabra más larga: le damos un poco más de ancho útil */
-    .categoria--entretenimiento-digital {
+    .categoria--entretenimiento-digital .categoria__cara {
         padding-inline: calc(20 * var(--k));
     }
 
@@ -497,5 +569,188 @@ h4 { font-size: var(--font-h4-size); font-weight: 700; text-transform: capitaliz
         flex-shrink: 0;
         width: calc(56 * var(--k));
         height: calc(32 * var(--k));
+    }
+}
+
+/* Móvil (hasta 600px): el diseño se reescala a 393px de referencia */
+@media (max-width: 600px) {
+    :root {
+        --k: calc(100vw / 393);
+        --perspectiva: calc(560 * var(--k));
+    }
+}
+
+/* ---------- Páginas de categoría (categorias/*.html) ---------- */
+/* Los colores de cada categoría (--fondo y --texto) vienen de la clase .pagina--<categoria>,
+   que comparte regla con los modificadores .categoria--<categoria> de la portada. */
+.pagina {
+    --columnas: 3;
+    --margen-x: calc(145 * var(--k));
+    --separacion: calc(32 * var(--k));
+    --titulo-tamano: max(1.5rem, calc(44 * var(--k)));
+    --volver-tamano: max(0.95rem, calc(30 * var(--k)));
+    --icono-volver: max(1.75rem, calc(44 * var(--k)));
+    --tarjeta-padding: calc(24 * var(--k));
+    --tarjeta-radio: calc(24 * var(--k));
+    --imagen-radio: calc(19 * var(--k));
+    --nombre-tamano: max(0.8rem, calc(22 * var(--k)));
+
+    gap: calc(63 * var(--k));
+    padding: calc(76 * var(--k)) var(--margen-x) calc(60 * var(--k));
+}
+
+.pagina__cabecera {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;   /* el título queda centrado en la página */
+    align-items: center;
+    gap: var(--separacion);
+}
+
+.pagina__volver {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: calc(16 * var(--k));
+    font-size: var(--volver-tamano);
+    font-weight: 700;
+    transition: color .2s ease;
+}
+
+.pagina__volver svg {
+    flex-shrink: 0;
+    width: var(--icono-volver);
+    height: var(--icono-volver);
+    transform: scaleX(-1);                 /* la flecha del símbolo apunta a la derecha */
+    transition: transform .2s ease;
+}
+
+.pagina__volver:hover,
+.pagina__volver:focus-visible {
+    color: var(--secundary-color);
+}
+
+.pagina__volver:hover svg,
+.pagina__volver:focus-visible svg {
+    transform: scaleX(-1) translateX(-3px);
+}
+
+.pagina__cabecera h1 {
+    font-size: var(--titulo-tamano);
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.proyectos {
+    display: grid;
+    grid-template-columns: repeat(var(--columnas), minmax(0, 1fr));
+    gap: var(--separacion);
+}
+
+.proyecto {
+    display: flex;
+    flex-direction: column;
+    gap: calc(12 * var(--k));
+    min-width: 0;
+    padding: var(--tarjeta-padding);
+    background-color: var(--fondo);
+    color: var(--texto);
+    border-radius: var(--tarjeta-radio);
+}
+
+/* Espacio de la imagen (en el diseño es el recuadro claro de cada tarjeta) */
+.proyecto__imagen {
+    display: block;
+    width: 100%;
+    aspect-ratio: 474 / 290;
+    object-fit: cover;
+    border-radius: var(--imagen-radio);
+    background-color: var(--primary-color);
+}
+
+.proyecto__nombre {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: calc(2 * 1.2em);           /* alto de 2 líneas: todas las tarjetas del mismo alto */
+    font-size: var(--nombre-tamano);
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    text-wrap: balance;
+}
+
+/* Tablet: 2 columnas. Se reescala con 768px de referencia, y el título pasa debajo del botón de volver. */
+@media (max-width: 1024px) {
+    :root:has(.pagina) { --k: calc(100vw / 768); }
+
+    .pagina {
+        --columnas: 2;
+        --margen-x: calc(40 * var(--k));
+        --separacion: calc(24 * var(--k));
+        --titulo-tamano: max(1.5rem, calc(36 * var(--k)));
+        --volver-tamano: max(0.95rem, calc(20 * var(--k)));
+        --icono-volver: max(2rem, calc(36 * var(--k)));
+        --tarjeta-padding: calc(20 * var(--k));
+        --tarjeta-radio: calc(20 * var(--k));
+        --imagen-radio: calc(14 * var(--k));
+        --nombre-tamano: max(0.9rem, calc(20 * var(--k)));
+
+        gap: calc(28 * var(--k));
+        padding: calc(40 * var(--k)) var(--margen-x) calc(40 * var(--k));
+    }
+
+    .pagina__cabecera {
+        grid-template-columns: 1fr;
+        gap: calc(20 * var(--k));
+    }
+
+    .pagina__cabecera h1 {
+        text-align: left;
+    }
+}
+
+/* Móvil: 1 columna, 393px de referencia */
+@media (max-width: 600px) {
+    :root:has(.pagina) { --k: calc(100vw / 393); }
+
+    .pagina {
+        --columnas: 1;
+        --margen-x: calc(16 * var(--k));
+        --separacion: calc(16 * var(--k));
+        --titulo-tamano: max(1.5rem, calc(28 * var(--k)));
+        --volver-tamano: max(0.95rem, calc(16 * var(--k)));
+        --icono-volver: max(2rem, calc(32 * var(--k)));
+        --tarjeta-padding: calc(16 * var(--k));
+        --tarjeta-radio: calc(20 * var(--k));
+        --imagen-radio: calc(14 * var(--k));
+        --nombre-tamano: max(1rem, calc(18 * var(--k)));
+
+        gap: calc(20 * var(--k));
+        padding: calc(32 * var(--k)) var(--margen-x) calc(32 * var(--k));
+    }
+}
+
+/* ---------- Entrada a una página de categoría desde la portada ---------- */
+/* La página arranca cubierta con el color de la categoría (--color-entrada, definido en el <html> de cada página)
+   y lo va descubriendo de abajo hacia arriba. Así continúa el color con el que terminó la portada. */
+html.viene-de-portada::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    pointer-events: none;
+    background-color: var(--color-entrada);
+    animation: entrada-categoria .45s cubic-bezier(.76, 0, .24, 1) .05s both;
+}
+
+@keyframes entrada-categoria {
+    from { clip-path: inset(0 0 0 0); }
+    to   { clip-path: inset(0 0 100% 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.viene-de-portada::before {
+        display: none;
     }
 }

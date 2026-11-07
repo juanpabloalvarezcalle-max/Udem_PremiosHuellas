@@ -8,9 +8,13 @@ const marcas = document.querySelectorAll('.indicador__marca');
 if (carrusel && marcas.length) {
     const tarjetas = carrusel.querySelectorAll('.categoria');
     let pendiente = false;
+    let anterior = null;                  // tarjeta activa la vez pasada (null = todavía no hay)
+    let avisar = false;                   // solo avisamos cuando cambia por deslizar, no al cargar ni al redimensionar
 
     function actualizarIndicador() {
         pendiente = false;
+        const notificar = avisar;
+        avisar = false;
 
         const estilos = getComputedStyle(carrusel);
         const inicio = carrusel.getBoundingClientRect().left + parseFloat(estilos.paddingLeft);
@@ -35,10 +39,19 @@ if (carrusel && marcas.length) {
         marcas.forEach((marca, indice) => {
             marca.classList.toggle('indicador__marca--activa', indice === activa);
         });
+
+        // Avisa a animaciones.js que cambió la categoría (para el destello de color)
+        if (notificar && anterior !== null && activa !== anterior) {
+            document.dispatchEvent(new CustomEvent('categoria:cambio', {
+                detail: { indice: activa, tarjeta: tarjetas[activa] }
+            }));
+        }
+        anterior = activa;
     }
 
     // requestAnimationFrame evita recalcular en cada píxel de scroll
     function alDeslizar() {
+        avisar = true;
         if (!pendiente) {
             pendiente = true;
             requestAnimationFrame(actualizarIndicador);
@@ -46,6 +59,12 @@ if (carrusel && marcas.length) {
     }
 
     carrusel.addEventListener('scroll', alDeslizar, { passive: true });
-    window.addEventListener('resize', alDeslizar);
+    window.addEventListener('resize', () => {
+        // Al redimensionar solo se recalcula el indicador (sin avisar de cambio de categoría)
+        if (!pendiente) {
+            pendiente = true;
+            requestAnimationFrame(actualizarIndicador);
+        }
+    });
     actualizarIndicador();
 }
