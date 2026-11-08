@@ -57,10 +57,10 @@
     /* ---------- Curvatura 3D ---------- */
 
     // Grados que se inclina la tarjeta más lejana al foco
-    const giroMaximo = () => (esTactil() ? 26 : 18);
+    const giroMaximo = () => (esTactil() ? 8 : 6);
     // Cuánto se inclina de lado por la velocidad del deslizamiento (solo carrusel)
-    const INCLINACION_POR_VELOCIDAD = 0.45;
-    const INCLINACION_MAXIMA = 9;
+    const INCLINACION_POR_VELOCIDAD = 0;
+    const INCLINACION_MAXIMA = 3;
 
     const estado = { foco: 0 };        // -1 (izquierda) … 0 (centro) … 1 (derecha). En escritorio sigue al cursor.
     let velocidad = 0;
@@ -118,8 +118,8 @@
 
     // El texto de la tarjeta sale de su máscara y el ícono sube (solo en el carrusel)
     function revelarTarjeta(i) {
-        gsap.fromTo(textosTarjeta[i], { yPercent: 115 }, { yPercent: 0, duration: 1, ease: 'expo.out', stagger: 0.06, overwrite: 'auto' });
-        gsap.fromTo(iconos[i], { y: 28, scale: 0.94 }, { y: 0, scale: 1, duration: 1.1, ease: 'expo.out', overwrite: 'auto' });
+        ///gsap.fromTo(textosTarjeta[i], { yPercent: 115 }, { yPercent: 0, duration: 1, ease: 'expo.out', stagger: 0.06, overwrite: 'auto' });
+        ///gsap.fromTo(iconos[i], { y: 28, scale: 0.94 }, { y: 0, scale: 1, duration: 1.1, ease: 'expo.out', overwrite: 'auto' });
     }
 
     // Móvil / tablet: carrusel.js avisa cuando cambia la tarjeta visible
