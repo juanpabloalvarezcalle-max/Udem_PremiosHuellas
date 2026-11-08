@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El rostro que recuerdo | Premios Huella 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../styles/style.css">
+<script src="../../scripts/proyecto.js" defer></script>
+</head>
+<body class="proyecto-pagina pagina--produccion-audiovisual">
+
+<!-- Iconos reutilizables (usan currentColor, así se les cambia el color desde CSS) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<!-- Círculo con X (cerrar) -->
+<symbol id="icono-cerrar" viewBox="0 0 56 56">
+<circle cx="28" cy="28" r="22" fill="none" stroke="currentColor" stroke-width="3"/>
+<path d="M20 20l16 16M36 20L20 36" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+</symbol>
+<!-- Flecha larga hacia la derecha -->
+<symbol id="icono-flecha-larga" viewBox="0 0 56 32">
+<path d="M4 16h46M37 4l13 12-13 12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+<!-- Chevron hacia la derecha (el de la izquierda es este mismo, volteado desde CSS) -->
+<symbol id="icono-chevron" viewBox="0 0 24 24">
+<path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+</svg>
+
+<header class="ficha__cabecera">
+<a class="ficha__cerrar" href="../../docs/categorias/produccion-audiovisual.html" aria-label="Cerrar y volver a Producción audiovisual">
+<svg aria-hidden="true"><use href="#icono-cerrar"/></svg>
+</a>
+<span class="ficha__categoria">Producción audiovisual</span>
+<h1 class="ficha__titulo">El rostro que recuerdo</h1>
+</header>
+
+<main class="ficha">
+
+<!-- Galería de imágenes del proyecto -->
+<section class="ficha__galeria" aria-label="Imágenes del proyecto" data-galeria>
+<div class="galeria__pista" tabindex="0">
+<img class="galeria__imagen" src="../../imgs/PlaceholderLC.png" alt="Imagen 1 de 5">
+<img class="galeria__imagen" src="../../imgs/PlaceholderLC.png" alt="Imagen 2 de 5">
+<img class="galeria__imagen" src="../../imgs/PlaceholderLC.png" alt="Imagen 3 de 5">
+<img class="galeria__imagen" src="../../imgs/PlaceholderLC.png" alt="Imagen 4 de 5">
+<img class="galeria__imagen" src="../../imgs/PlaceholderLC.png" alt="Imagen 5 de 5">
+</div>
+<button class="galeria__flecha galeria__flecha--anterior" type="button" aria-label="Imagen anterior"><svg aria-hidden="true"><use href="#icono-chevron"/></svg></button>
+<button class="galeria__flecha galeria__flecha--siguiente" type="button" aria-label="Imagen siguiente"><svg aria-hidden="true"><use href="#icono-chevron"/></svg></button>
+<div class="galeria__puntos">
+<button class="galeria__punto" type="button" aria-label="Ir a la imagen 1"></button>
+<button class="galeria__punto" type="button" aria-label="Ir a la imagen 2"></button>
+<button class="galeria__punto" type="button" aria-label="Ir a la imagen 3"></button>
+<button class="galeria__punto" type="button" aria-label="Ir a la imagen 4"></button>
+<button class="galeria__punto" type="button" aria-label="Ir a la imagen 5"></button>
+</div>
+</section>
+
+<!-- Información del proyecto (pendiente: por ahora solo se conoce el nombre) -->
+<section class="ficha__info">
+<p class="ficha__etiqueta">Asignatura</p>
+<p class="ficha__dato">Nombre de la asignatura</p>
+<hr class="ficha__linea">
+<p class="ficha__etiqueta">Docente</p>
+<p class="ficha__dato">Nombre del profesor</p>
+<p class="ficha__descripcion">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+<a class="ficha__boton" href="#">Conoce más <svg aria-hidden="true"><use href="#icono-flecha-larga"/></svg></a>
+</section>
+
+<!-- Integrantes -->
+<section class="ficha__integrantes" aria-labelledby="integrantes-titulo">
+<h2 id="integrantes-titulo">Integrantes del proyecto</h2>
+<ul class="integrantes__lista">
+<li class="integrante">
+<img class="integrante__foto" src="../../imgs/PlaceholderLC.png" alt="">
+<span class="integrante__nombre">Nombre del<br>integrante</span>
+</li>
+<li class="integrante">
+<img class="integrante__foto" src="../../imgs/PlaceholderLC.png" alt="">
+<span class="integrante__nombre">Nombre del<br>integrante</span>
+</li>
+<li class="integrante">
+<img class="integrante__foto" src="../../imgs/PlaceholderLC.png" alt="">
+<span class="integrante__nombre">Nombre del<br>integrante</span>
+</li>
+<li class="integrante">
+<img class="integrante__foto" src="../../imgs/PlaceholderLC.png" alt="">
+<span class="integrante__nombre">Nombre del<br>integrante</span>
+</li>
+<li class="integrante">
+<img class="integrante__foto" src="../../imgs/PlaceholderLC.png" alt="">
+<span class="integrante__nombre">Nombre del<br>integrante</span>
+</li>
+<li class="integrante">
+<img class="integrante__foto" src="../../imgs/PlaceholderLC.png" alt="">
+<span class="integrante__nombre">Nombre del<br>integrante</span>
+</li>
+</ul>
+</section>
+
+</main>
+
+</body>
+</html>
