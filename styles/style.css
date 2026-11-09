@@ -772,11 +772,44 @@ a.proyecto:focus-visible {
     outline-offset: calc(4 * var(--k));
 }
 
+/* Táctil (tablet y móvil): al tocar una tarjeta se hunde un poco y su imagen hace un leve acercamiento,
+   para que el toque se sienta. El :hover se descarta porque en pantallas táctiles se queda "pegado".
+   Se aplica tanto si el dispositivo no tiene cursor como en los anchos de tablet y móvil. */
+@media (hover: none), (max-width: 1024px) {
+    a.proyecto {
+        overflow: hidden;
+        -webkit-tap-highlight-color: transparent;
+        transition: transform .4s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    a.proyecto:hover { transform: none; }
+
+    .proyecto__imagen {
+        transition: transform .4s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    a.proyecto:active {
+        transform: scale(.955);
+        transition-duration: .12s;
+    }
+
+    a.proyecto:active .proyecto__imagen {
+        transform: scale(1.05);
+        transition-duration: .12s;
+    }
+
+    /* Si el usuario pide menos movimiento, el toque solo baja la opacidad */
+    @media (prefers-reduced-motion: reduce) {
+        a.proyecto:active { transform: none; opacity: .75; }
+        a.proyecto:active .proyecto__imagen { transform: none; }
+    }
+}
+
 /* ---------- Páginas de proyecto (proyectos/<categoria>/<proyecto>.html) ---------- */
 /* El color de la categoría (--fondo y --texto) viene de la clase .pagina--<categoria> del body. */
 .proyecto-pagina {
     --margen-x: calc(145 * var(--k));
-    --columnas-ficha: minmax(0, 1.25fr) minmax(0, 1fr);
+   --columnas-ficha: minmax(0, 1fr) minmax(0, 1fr);
     --separacion: calc(64 * var(--k));
     --titulo-tamano: max(1.75rem, calc(56 * var(--k)));
     --etiqueta-tamano: max(0.8rem, calc(18 * var(--k)));
@@ -825,7 +858,7 @@ a.proyecto:focus-visible {
     border-radius: 999px;
     background-color: var(--fondo);
     color: var(--texto);
-    font-size: var(--etiqueta-tamano);
+    font-size: var(--font-h2-size);
     font-weight: 700;
 }
 
@@ -925,6 +958,11 @@ a.proyecto:focus-visible {
 .galeria__punto[aria-current="true"] {
     background-color: var(--font-color);
     transform: scale(1.25);
+}
+
+/* Categorías con una sola imagen (producción escrita y fotografía): no hay carrusel */
+.ficha__galeria--unica .galeria__imagen {
+    border-radius: var(--radio);
 }
 
 /* Información */
@@ -1040,6 +1078,45 @@ a.proyecto:focus-visible {
     line-height: 1.25;
 }
 
+/* Escritorio: la página de proyecto debe caber en la pantalla sin hacer scroll.
+   La altura de la galería = alto de la ventana menos lo que ocupan el resto de bloques (--resto-ficha),
+   con un mínimo y un máximo para que no quede ni diminuta ni gigante. */
+@media (min-width: 1025px) {
+    .proyecto-pagina {
+        --resto-ficha: calc(510 * var(--k) + 14px);
+        --integrante-foto: calc(88 * var(--k));
+
+        gap: calc(32 * var(--k));
+        padding-top: calc(40 * var(--k));
+        padding-bottom: calc(32 * var(--k));
+    }
+
+    .ficha { gap: calc(32 * var(--k)) var(--separacion); }
+
+    /* La columna de información no cuenta para el alto de la fila: toma el alto de la galería
+       y, si el texto es más largo, la descripción se desplaza por dentro (el botón queda siempre visible). */
+    .ficha__info {
+        align-self: stretch;
+        contain: size;
+        min-height: 0;
+    }
+
+    .ficha__descripcion {
+        flex: 1 1 0;
+        min-height: calc(3 * 1.5em);
+        overflow-y: auto;
+        padding-right: calc(12 * var(--k));
+        scrollbar-width: thin;
+    }
+
+    .ficha__boton { margin-top: calc(12 * var(--k)); }
+
+    .galeria__imagen {
+        aspect-ratio: auto;
+        height: clamp(calc(300 * var(--k)), calc(100vh - var(--resto-ficha)), calc(460 * var(--k)));
+    }
+}
+
 /* Tablet */
 @media (max-width: 1024px) {
     :root:has(.proyecto-pagina) { --k: calc(100vw / 768); }
@@ -1047,7 +1124,7 @@ a.proyecto:focus-visible {
     .proyecto-pagina {
         --margen-x: calc(40 * var(--k));
         --columnas-ficha: minmax(0, 1fr);
-        --titulo-tamano: max(1.6rem, calc(44 * var(--k)));
+        --titulo-tamano: max(1.1rem, calc(44 * var(--k)));
         --etiqueta-tamano: max(.8rem, calc(16 * var(--k)));
         --dato-tamano: max(1rem, calc(22 * var(--k)));
         --texto-tamano: max(.9rem, calc(18 * var(--k)));
@@ -1083,3 +1160,4 @@ a.proyecto:focus-visible {
     .galeria__puntos { bottom: calc(12 * var(--k)); }
     .ficha__boton { align-self: stretch; justify-content: center; }
 }
+
