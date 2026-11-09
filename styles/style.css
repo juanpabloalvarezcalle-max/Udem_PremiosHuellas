@@ -757,14 +757,23 @@ html.viene-de-portada::before {
 
 /* Tarjetas de la página de categoría: ahora son enlaces a la página de su proyecto */
 a.proyecto {
+    overflow: hidden;                      /* recorta el acercamiento de la imagen dentro de la tarjeta */
     color: var(--texto);
     text-decoration: none;
-    transition: transform .25s cubic-bezier(.16, 1, .3, 1);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .4s cubic-bezier(.16, 1, .3, 1);
 }
 
-a.proyecto:hover,
-a.proyecto:focus-visible {
-    transform: translateY(calc(-6 * var(--k)));
+.proyecto__imagen {
+    transition: transform .4s cubic-bezier(.16, 1, .3, 1);
+}
+
+/* Con cursor (escritorio): al pasar por encima la tarjeta se levanta */
+@media (hover: hover) and (min-width: 1025px) {
+    a.proyecto:hover,
+    a.proyecto:focus-visible {
+        transform: translateY(calc(-6 * var(--k)));
+    }
 }
 
 a.proyecto:focus-visible {
@@ -772,37 +781,26 @@ a.proyecto:focus-visible {
     outline-offset: calc(4 * var(--k));
 }
 
-/* Táctil (tablet y móvil): al tocar una tarjeta se hunde un poco y su imagen hace un leve acercamiento,
-   para que el toque se sienta. El :hover se descarta porque en pantallas táctiles se queda "pegado".
-   Se aplica tanto si el dispositivo no tiene cursor como en los anchos de tablet y móvil. */
-@media (hover: none), (max-width: 1024px) {
-    a.proyecto {
-        overflow: hidden;
-        -webkit-tap-highlight-color: transparent;
-        transition: transform .4s cubic-bezier(.16, 1, .3, 1);
-    }
+/* Al presionar (clic o toque, en cualquier pantalla): la tarjeta se hunde un poco y su imagen
+   hace un leve acercamiento, para que la pulsación se sienta. En escritorio conserva medio levantamiento. */
+a.proyecto:active {
+    transform: scale(.955);
+    transition-duration: .12s;
+}
 
-    a.proyecto:hover { transform: none; }
+a.proyecto:active .proyecto__imagen {
+    transform: scale(1.05);
+    transition-duration: .12s;
+}
 
-    .proyecto__imagen {
-        transition: transform .4s cubic-bezier(.16, 1, .3, 1);
-    }
+@media (hover: hover) and (min-width: 1025px) {
+    a.proyecto:active { transform: translateY(calc(-3 * var(--k))) scale(.965); }
+}
 
-    a.proyecto:active {
-        transform: scale(.955);
-        transition-duration: .12s;
-    }
-
-    a.proyecto:active .proyecto__imagen {
-        transform: scale(1.05);
-        transition-duration: .12s;
-    }
-
-    /* Si el usuario pide menos movimiento, el toque solo baja la opacidad */
-    @media (prefers-reduced-motion: reduce) {
-        a.proyecto:active { transform: none; opacity: .75; }
-        a.proyecto:active .proyecto__imagen { transform: none; }
-    }
+/* Si el usuario pide menos movimiento, la pulsación solo baja la opacidad */
+@media (prefers-reduced-motion: reduce) {
+    a.proyecto:active { transform: none; opacity: .75; }
+    a.proyecto:active .proyecto__imagen { transform: none; }
 }
 
 /* ---------- Páginas de proyecto (proyectos/<categoria>/<proyecto>.html) ---------- */
@@ -1004,7 +1002,7 @@ a.proyecto:focus-visible {
     align-items: center;
     gap: calc(14 * var(--k));
     margin-top: calc(24 * var(--k));
-    padding: .8em 1.6em;
+    padding: .8em 1.9em;
     border-radius: 999px;
     background-color: var(--button-secundary-color);
     color: var(--primary-color);
@@ -1093,23 +1091,18 @@ a.proyecto:focus-visible {
 
     .ficha { gap: calc(32 * var(--k)) var(--separacion); }
 
-    /* La columna de información no cuenta para el alto de la fila: toma el alto de la galería
-       y, si el texto es más largo, la descripción se desplaza por dentro (el botón queda siempre visible). */
-    .ficha__info {
-        align-self: stretch;
-        contain: size;
-        min-height: 0;
-    }
-
-    .ficha__descripcion {
-        flex: 1 1 0;
-        min-height: calc(3 * 1.5em);
-        overflow-y: auto;
-        padding-right: calc(12 * var(--k));
-        scrollbar-width: thin;
-    }
+    /* La información toma su alto natural. Si la descripción es larga, scripts/ajuste-descripcion.js
+       le reduce un poco la letra hasta que todo el texto quepa sin hacer scroll en la página. */
+    .ficha__info { align-self: start; }
 
     .ficha__boton { margin-top: calc(12 * var(--k)); }
+
+    /* Pantallas muy bajitas: ajuste-descripcion.js activa este modo para ganar unos píxeles de alto */
+    .ficha__info[data-compacto] { gap: calc(4 * var(--k)); }
+    .ficha__info[data-compacto] .ficha__dato { font-size: max(.9rem, calc(20 * var(--k))); }
+    .ficha__info[data-compacto] .ficha__linea { margin: 0; }
+    .ficha__info[data-compacto] .ficha__descripcion { margin-top: calc(4 * var(--k)); }
+    .ficha__info[data-compacto] .ficha__boton { margin-top: calc(8 * var(--k)); padding-block: .55em; }
 
     .galeria__imagen {
         aspect-ratio: auto;
