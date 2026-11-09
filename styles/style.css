@@ -959,8 +959,20 @@ a.proyecto:active .proyecto__imagen {
 }
 
 /* Categorías con una sola imagen (producción escrita y fotografía): no hay carrusel */
+.ficha__galeria--unica {
+    justify-self: start;                   /* el marco se ajusta a la foto, que se ve completa y sin recortes */
+    max-width: 100%;
+}
+
 .ficha__galeria--unica .galeria__imagen {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: auto;                    /* anula el 16/10 del carrusel: aquí manda la proporción de la foto */
     border-radius: var(--radio);
+    object-fit: contain;
+    object-position: left top;
 }
 
 /* Información */
@@ -1058,7 +1070,7 @@ a.proyecto:active .proyecto__imagen {
     flex-direction: column;
     align-items: center;
     gap: calc(14 * var(--k));
-    width: calc(var(--integrante-foto) * 1.4);
+    width: calc(var(--integrante-foto) * 1.9);
     text-align: center;
 }
 
@@ -1106,6 +1118,16 @@ a.proyecto:active .proyecto__imagen {
 
     .galeria__imagen {
         aspect-ratio: auto;
+        height: clamp(calc(300 * var(--k)), calc(100vh - var(--resto-ficha)), calc(460 * var(--k)));
+    }
+
+    /* Con una sola foto la columna de la imagen se ajusta a su ancho, así la información queda pegada a la foto
+       (y no lejos de ella cuando la foto es vertical) */
+    .ficha:has(.ficha__galeria--unica) {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .ficha__galeria--unica .galeria__imagen {
         height: clamp(calc(300 * var(--k)), calc(100vh - var(--resto-ficha)), calc(460 * var(--k)));
     }
 }
