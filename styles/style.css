@@ -1195,8 +1195,47 @@ a.proyecto:active .proyecto__imagen {
     50%      { transform: translate(calc(-5 * var(--k)), -50%); }
 }
 
+/* Flecha para volver atrás (la crea scripts/integrantes.js): misma forma que la de "más", pegada al borde izquierdo */
+.integrantes__menos {
+    position: absolute;
+    top: calc(var(--integrante-foto) / 2);
+    left: 0;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: max(2rem, calc(40 * var(--k)));
+    height: max(2rem, calc(40 * var(--k)));
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: var(--fondo);
+    color: var(--texto);
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: opacity .25s ease, transform .25s cubic-bezier(.16, 1, .3, 1);
+}
+
+.integrantes__menos svg { width: 55%; height: 55%; transform: scaleX(-1); }
+
+.integrantes[data-mas-izquierda] .integrantes__menos {
+    opacity: 1;
+    pointer-events: auto;
+    animation: integrantes-invitar-atras 1.8s ease-in-out infinite;
+}
+
+.integrantes__menos:hover,
+.integrantes__menos:focus-visible { background-color: var(--secundary-color); color: var(--primary-color); }
+
+@keyframes integrantes-invitar-atras {
+    0%, 100% { transform: translate(0, -50%); }
+    50%      { transform: translate(calc(5 * var(--k)), -50%); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-    .integrantes[data-mas-derecha] .integrantes__mas { animation: none; }
+    .integrantes[data-mas-derecha] .integrantes__mas,
+    .integrantes[data-mas-izquierda] .integrantes__menos { animation: none; }
 }
 
 /* Tablet */
