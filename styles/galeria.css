@@ -1,0 +1,416 @@
+/* ==========================================================
+   Galería del proyecto (docs/galeria.html)
+   Visor de fotos a pantalla completa, adaptado del "Carrusel documental" a la línea gráfica de Premios Huella:
+   mismos colores (--primary-color, --secundary-color, --font-color, y --fondo/--texto de cada categoría),
+   misma tipografía y los mismos botones de píldora naranja → azul.
+   Se carga después de style.css, que aporta las variables y la tipografía.
+   ========================================================== */
+
+.galeria-pagina {
+    --vidrio: rgba(33, 76, 112, .62);             /* --font-color con transparencia */
+    --vidrio-hover: rgba(246, 236, 219, .18);     /* --primary-color con transparencia */
+    --borde-vidrio: rgba(246, 236, 219, .28);
+    --arriba: 5.75rem;                            /* hueco que deja la foto arriba (cabecera) */
+    --abajo: 15.5rem;                             /* y abajo (contador + miniaturas) */
+    --lados: clamp(1rem, 4vw, 3rem);
+    --suave: cubic-bezier(.16, 1, .3, 1);
+
+    /* style.css da al body padding, gap y flex: aquí el visor ocupa toda la pantalla */
+    display: block;
+    gap: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    background-color: var(--font-color);
+    color: var(--primary-color);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Colores de cada categoría (la clase la pone scripts/galeria.js) */
+.galeria-pagina.pagina--fotografia { --fondo: var(--fotografia-color); --texto: var(--font-color); }
+.galeria-pagina[class*="pagina--"] .etiqueta-categoria { background-color: var(--fondo); color: var(--texto); }
+
+[hidden] { display: none !important; }
+
+/* ---------- Escenario ---------- */
+.galeria-escenario {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background-color: var(--font-color);
+    cursor: pointer;
+}
+
+.capa {
+    position: absolute;
+    inset: 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 1.1s cubic-bezier(.4, 0, .2, 1), transform 9s ease-out;
+}
+
+.capa.activa { opacity: 1; z-index: 1; }
+
+/* Fondo: la misma foto, muy desenfocada, para que ninguna proporción deje huecos vacíos */
+.fondo { position: absolute; inset: 0; overflow: hidden; }
+.fondo .capa {
+    inset: -8%;
+    background-size: cover;
+    filter: blur(38px) brightness(.55) saturate(1.1);
+}
+
+/* Foto completa, sin recortes (hay fotos horizontales y verticales) */
+.foto-marco {
+    position: absolute;
+    top: var(--arriba);
+    bottom: var(--abajo);
+    left: var(--lados);
+    right: var(--lados);
+    z-index: 1;
+    transition: top .65s var(--suave), bottom .65s var(--suave), left .65s var(--suave), right .65s var(--suave);
+}
+
+.foto-marco .capa {
+    background-size: contain;
+    transform: scale(1.04);
+    filter: drop-shadow(0 18px 40px rgba(0, 0, 0, .45));
+}
+
+.foto-marco .capa.activa { transform: scale(1); }
+
+.escenario__velo {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(to bottom, rgba(33, 76, 112, .7) 0%, rgba(33, 76, 112, 0) 22%, rgba(33, 76, 112, 0) 58%, rgba(33, 76, 112, .85) 100%);
+    transition: opacity .75s ease;
+}
+
+/* ---------- Interfaz ---------- */
+.galeria-ui {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    padding: clamp(1rem, 2.5vw, 1.75rem) var(--lados);
+    padding-top: max(clamp(1rem, 2.5vw, 1.75rem), env(safe-area-inset-top));
+    padding-bottom: max(.75rem, env(safe-area-inset-bottom));
+    padding-left: max(var(--lados), env(safe-area-inset-left));
+    padding-right: max(var(--lados), env(safe-area-inset-right));
+    pointer-events: none;                 /* los clics pasan a la foto; los controles lo reactivan */
+    transition: opacity .35s var(--suave), transform .35s var(--suave);
+}
+
+.galeria-ui * { pointer-events: auto; }
+
+/* Sin movimiento del ratón/dedo unos segundos: se esconde la interfaz y la foto crece (como en YouTube) */
+body.ui-inactiva { cursor: none; }
+body.ui-inactiva .galeria-escenario { cursor: none; }
+body.ui-inactiva .galeria-ui { opacity: 0; transform: translateY(10px); transition: opacity .85s ease, transform .85s ease; }
+body.ui-inactiva .galeria-ui * { pointer-events: none; }
+body.ui-inactiva .escenario__velo { opacity: 0; transition: opacity .85s ease; }
+body.ui-inactiva .foto-marco { top: 1rem; bottom: 1rem; left: 1rem; right: 1rem; }
+
+/* ---------- Cabecera ---------- */
+.barra-superior {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.marca {
+    display: flex;
+    align-items: center;
+    gap: clamp(.75rem, 1.6vw, 1.25rem);
+    min-width: 0;
+}
+
+.cerrar {
+    flex: none;
+    display: block;
+    width: clamp(2.5rem, 3.4vw, 3.4rem);
+    height: clamp(2.5rem, 3.4vw, 3.4rem);
+    color: var(--primary-color);
+    transition: transform .2s ease, color .2s ease;
+}
+
+.cerrar svg { display: block; width: 100%; height: 100%; }
+.cerrar:hover, .cerrar:focus-visible { color: var(--secundary-color); transform: scale(1.08); }
+
+.titulo {
+    font-size: clamp(1.15rem, 2.4vw, 2rem);
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--primary-color);
+    text-shadow: 0 2px 14px rgba(0, 0, 0, .45);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.etiqueta-categoria {
+    flex: none;
+    padding: .45em 1.1em;
+    border-radius: 999px;
+    font-size: clamp(.72rem, 1vw, .95rem);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.etiqueta-categoria:empty { display: none; }
+
+.acciones { display: flex; align-items: center; gap: .65rem; flex: none; }
+
+.pildora,
+.circulo,
+.flecha {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--borde-vidrio);
+    background: var(--vidrio);
+    color: var(--primary-color);
+    font: inherit;
+    cursor: pointer;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    transition: background-color .25s ease, color .25s ease, border-color .25s ease, transform .25s var(--suave);
+}
+
+.pildora {
+    gap: .55rem;
+    padding: .6rem 1.15rem;
+    border-radius: 999px;
+    font-size: .85rem;
+    font-weight: 700;
+}
+
+.pildora .icono { width: 15px; height: 15px; }
+.pildora[hidden], .icono[hidden] { display: none; }
+
+/* Botón principal (abrir el original): el mismo naranja → azul del CTA de las páginas de proyecto */
+.pildora--original {
+    border-color: transparent;
+    background: var(--button-secundary-color);
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.pildora--original svg { width: 1.6em; height: 1em; transition: transform .25s var(--suave); }
+.pildora--original:hover, .pildora--original:focus-visible { background: var(--button-primary-color); }
+.pildora--original:hover svg, .pildora--original:focus-visible svg { transform: translateX(4px); }
+
+.pildora--icono:hover, .circulo:hover,
+.pildora--icono:focus-visible, .circulo:focus-visible { background: var(--vidrio-hover); border-color: var(--primary-color); }
+
+.pildora--icono[aria-pressed="false"] { border-color: var(--secundary-color); color: var(--secundary-color); }
+
+.circulo { width: 2.5rem; height: 2.5rem; border-radius: 50%; }
+.circulo svg { width: 17px; height: 17px; }
+
+/* ---------- Zona inferior ---------- */
+.zona-inferior {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: end;
+    gap: clamp(1.5rem, 3vw, 3rem);
+    margin-top: auto;                     /* pegada abajo, encima del pie */
+    margin-bottom: .5rem;
+}
+
+.contador { display: flex; flex-direction: column; gap: .35rem; padding-bottom: 1rem; }
+.contador__cifras { display: flex; align-items: baseline; gap: .3rem; }
+
+.contador__actual {
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 700;
+    line-height: .9;
+    color: var(--primary-color);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, .5);
+}
+
+.contador__barra { font-size: 1.6rem; color: rgba(246, 236, 219, .4); }
+.contador__total { font-size: 1.6rem; font-weight: 700; color: var(--secundary-color); }
+
+.contador__rotulo {
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: rgba(246, 236, 219, .7);
+}
+
+.muelle { display: flex; flex-direction: column; gap: .9rem; min-width: 0; }
+
+.muelle__cabecera { display: flex; justify-content: space-between; align-items: center; padding-right: .5rem; }
+
+.progreso { flex: 1; max-width: 220px; height: 3px; border-radius: 3px; background: rgba(246, 236, 219, .22); overflow: hidden; }
+.progreso__relleno { width: 0; height: 100%; background: var(--secundary-color); transition: width .1s linear; }
+
+.flechas { display: flex; gap: .5rem; }
+
+.flecha { width: 2.6rem; height: 2.6rem; border-radius: 50%; }
+.flecha svg { width: 18px; height: 18px; }
+.flecha:hover, .flecha:focus-visible { background: var(--secundary-color); border-color: var(--secundary-color); transform: translateY(-2px) scale(1.06); }
+
+/* Miniaturas */
+.pista-miniaturas {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: .9rem .5rem 1.3rem;
+    margin: -.6rem -.5rem -1.3rem;
+    scrollbar-width: none;
+    cursor: grab;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.pista-miniaturas::-webkit-scrollbar { display: none; }
+.pista-miniaturas:active { cursor: grabbing; }
+
+.miniaturas { display: flex; gap: 1.1rem; width: max-content; }
+
+.miniatura {
+    position: relative;
+    flex: 0 0 200px;
+    height: 140px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid var(--borde-vidrio);
+    background: var(--font-color);
+    cursor: pointer;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, .3);
+    transition: transform .4s var(--suave), border-color .4s ease, box-shadow .4s ease;
+}
+
+.miniatura img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(.8); transition: transform .6s var(--suave), filter .4s ease; }
+.miniatura:hover { transform: translateY(-6px) scale(1.03); border-color: var(--primary-color); }
+.miniatura:hover img { transform: scale(1.08); filter: brightness(1); }
+
+.miniatura.activa { flex-basis: 220px; border-color: var(--secundary-color); transform: translateY(-4px); box-shadow: 0 8px 18px rgba(0, 0, 0, .35); }
+.miniatura.activa img { filter: brightness(1.02); }
+
+.miniatura__num {
+    position: absolute;
+    top: .6rem;
+    left: .6rem;
+    padding: .15rem .55rem;
+    border-radius: 999px;
+    border: 1px solid var(--borde-vidrio);
+    background: var(--vidrio);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    color: var(--primary-color);
+}
+
+.miniatura.activa .miniatura__num { background: var(--secundary-color); border-color: var(--secundary-color); }
+
+/* ---------- Pie ---------- */
+.pie { display: flex; justify-content: space-between; align-items: center; padding-top: .9rem; }
+.atajos { font-size: .76rem; color: rgba(246, 236, 219, .6); }
+
+.atajos kbd {
+    padding: .12rem .35rem;
+    border: 1px solid var(--borde-vidrio);
+    border-radius: 4px;
+    background: rgba(246, 236, 219, .1);
+    font: inherit;
+    font-size: .7rem;
+    color: var(--primary-color);
+}
+
+.puntos { display: flex; gap: .5rem; }
+.punto { width: 22px; height: 4px; padding: 0; border: 0; border-radius: 2px; background: rgba(246, 236, 219, .28); cursor: pointer; transition: width .3s var(--suave), background-color .3s ease; }
+.punto:hover { background: rgba(246, 236, 219, .6); }
+.punto.activo { width: 38px; background: var(--secundary-color); }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 1024px) {
+    .galeria-pagina { --abajo: 14rem; }
+    .miniatura { flex-basis: 170px; height: 120px; }
+    .miniatura.activa { flex-basis: 190px; }
+}
+
+/* ---------- Móvil ---------- */
+@media (max-width: 768px) {
+    .galeria-pagina { --arriba: 5rem; --abajo: 13.75rem; --lados: 1rem; }
+
+    .barra-superior { align-items: flex-start; }
+    .marca { flex-wrap: wrap; row-gap: .4rem; }
+    .titulo { flex: 1 1 calc(100% - 4rem); font-size: 1.1rem; }
+    .etiqueta-categoria { display: none; }
+
+    /* Los botones de la cabecera pasan a ser solo icono para no amontonarse */
+    .pildora__texto { display: none; }
+    .pildora--icono { width: 2.5rem; height: 2.5rem; padding: 0; border-radius: 50%; }
+    .pildora--original { width: 2.5rem; height: 2.5rem; padding: 0; border-radius: 50%; }
+    .pildora--original svg { width: 1.2rem; }
+
+    .zona-inferior { grid-template-columns: 1fr; gap: .65rem; margin-bottom: .25rem; }
+    .contador { flex-direction: row; align-items: baseline; justify-content: space-between; padding-bottom: 0; }
+    .contador__actual { font-size: 2.1rem; }
+    .contador__barra, .contador__total { font-size: 1.2rem; }
+    .contador__rotulo { font-size: .66rem; letter-spacing: .12em; }
+    .progreso { max-width: 140px; }
+    .flecha { width: 2.4rem; height: 2.4rem; }
+    .miniatura { flex-basis: 135px; height: 92px; border-radius: 10px; }
+    .miniatura.activa { flex-basis: 150px; }
+    .miniatura__num { top: .4rem; left: .4rem; font-size: .64rem; padding: .1rem .45rem; }
+
+    .pie { justify-content: center; padding-top: .5rem; }
+    .atajos { display: none; }
+    .punto { width: 18px; }
+    .punto.activo { width: 30px; }
+}
+
+@media (max-width: 480px) {
+    .miniatura { flex-basis: 118px; height: 80px; }
+    .miniatura.activa { flex-basis: 130px; }
+}
+
+/* ---------- Móvil en horizontal ---------- */
+@media (max-height: 520px) and (orientation: landscape) {
+    .galeria-pagina { --arriba: 3.6rem; --abajo: 7.5rem; --lados: 1.25rem; }
+    .galeria-ui { padding-top: max(.5rem, env(safe-area-inset-top)); }
+    .titulo { font-size: 1rem; flex-basis: auto; }
+    .cerrar { width: 2.2rem; height: 2.2rem; }
+    .etiqueta-categoria { display: none; }
+    .pildora__texto { display: none; }
+    .circulo, .pildora--icono, .pildora--original { width: 2.2rem; height: 2.2rem; padding: 0; border-radius: 50%; }
+    .pildora--original svg { width: 1.2rem; }
+    .zona-inferior { grid-template-columns: auto minmax(0, 1fr); gap: 1.5rem; margin-bottom: 0; }
+    .contador { flex-direction: column; padding-bottom: 0; }
+    .contador__rotulo { display: none; }
+    .flecha { width: 2rem; height: 2rem; }
+    .miniatura { flex-basis: 100px; height: 64px; border-radius: 8px; }
+    .miniatura.activa { flex-basis: 112px; }
+    .miniatura__num { display: none; }
+    .pie { display: none; }
+}
+
+/* ---------- Táctil: sin efectos hover que se queden pegados ---------- */
+@media (hover: none) {
+    .miniatura:hover { transform: none; }
+    .miniatura.activa { transform: translateY(-3px); }
+    .flecha:hover, .circulo:hover, .pildora:hover, .cerrar:hover { transform: none; }
+}
+
+/* ---------- Menos movimiento ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .capa, .foto-marco .capa, .foto-marco, .miniatura, .miniatura img { transition: opacity .2s linear; transform: none; }
+    .foto-marco .capa.activa { transform: none; }
+}
