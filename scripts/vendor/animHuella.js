@@ -11,11 +11,11 @@
     'use strict';
 
     var CLAVE = 'huella-anim';          // lo que se guarda entre las dos páginas (colores de la categoría)
-    var DIBUJO = 520;                   // ms que tarda en trazarse cada línea
-    var ESCALON = 26;                   // ms de diferencia entre una línea y la siguiente (del centro hacia afuera)
-    var ENTRADA = 220;                  // ms que tarda el color en cubrir la pantalla
-    var PAUSA = 140;                    // ms que se queda la huella completa antes de abrir la página
-    var SALIDA = 520;                   // ms que tarda la página de destino en destaparse
+    var DIBUJO = 230;                   // ms que tarda en trazarse cada línea
+    var ESCALON = 6;                   // ms de diferencia entre una línea y la siguiente (del centro hacia afuera)
+    var ENTRADA = 90;                  // ms que tarda el color en cubrir la pantalla
+    var PAUSA = 30;                    // ms que se queda la huella completa antes de abrir la página
+    var SALIDA = 280;                   // ms que tarda la página de destino en destaparse
 
     var html = document.documentElement;
     var NS = 'http://www.w3.org/2000/svg';
