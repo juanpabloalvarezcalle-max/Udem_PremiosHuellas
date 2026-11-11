@@ -241,20 +241,14 @@ html.gsap-activo .categoria__cara {
     pointer-events: none;
 }
 
-/* Pantalla de carga (solo la primera vez de cada visita): una línea que crece desde el centro con el porcentaje */
+/* Pantalla de carga (solo la primera vez de cada visita): la huella del trofeo se va formando */
 .carga {
     display: none;
     position: fixed;
     inset: 0;
     z-index: 100;
-    place-content: center;
-    justify-items: center;
-    gap: calc(14 * var(--k));
+    place-items: center;
     background-color: var(--primary-color);
-    color: var(--font-color);
-    font-size: max(0.75rem, calc(16 * var(--k)));
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;   /* los dígitos no "bailan" mientras cuenta */
 }
 
 html.con-carga .carga {
@@ -263,15 +257,6 @@ html.con-carga .carga {
 
 html.con-carga body {
     overflow: hidden;
-}
-
-.carga__linea {
-    display: block;
-    width: min(60vw, calc(560 * var(--k)));
-    height: max(2px, calc(3 * var(--k)));
-    border-radius: 999px;
-    background-color: var(--secundary-color);
-    transform: scaleX(0);
 }
 
 /* Máscaras de texto: cada línea queda dentro de una caja con overflow oculto para poder "subirla" desde abajo.

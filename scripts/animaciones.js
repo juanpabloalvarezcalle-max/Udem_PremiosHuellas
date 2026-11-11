@@ -228,20 +228,20 @@
     });
 
     if (hayCarga) {
-        const numero = document.querySelector('.carga__numero');
-        const progreso = { valor: 0 };
         try { sessionStorage.setItem('huella-carga', '1'); } catch (e) { /* sin almacenamiento: la carga se verá cada vez, no pasa nada */ }
 
-        entrada
-            .fromTo('.carga__linea', { scaleX: 0 }, { scaleX: 1, duration: 1.0, ease: 'expo.inOut' })
-            .to(progreso, {
-                valor: 100,
-                duration: 1.0,
-                ease: 'expo.inOut',
-                onUpdate: () => { numero.textContent = `${Math.round(progreso.valor)}%`; }
-            }, '<')
-            .to(['.carga__numero', '.carga__linea'], { opacity: 0, duration: 0.3, ease: 'power2.out' }, '+=0.05')
-            .to('.carga', { opacity: 0, duration: 0.5, ease: 'power1.inOut', onComplete: () => html.classList.remove('con-carga') }, '<0.15');
+        // La huella del trofeo (la de animHuella.js) se va formando de abajo hacia arriba, con el color de acento
+        const contenedor = document.querySelector('.carga');
+        const dibujo = window.HuellaTrofeo ? window.HuellaTrofeo.crear(getComputedStyle(html).getPropertyValue('--secundary-color').trim() || '#FC825A') : null;
+        if (dibujo) {
+            contenedor.appendChild(dibujo.svg);
+            const trazos = dibujo.trazos.sort((p, q) => p.orden - q.orden).map((t) => t.el);
+            entrada.fromTo(trazos, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.5, ease: 'power2.inOut', stagger: 0.014 })
+                .to(dibujo.svg, { scale: 1.04, duration: 0.18, yoyo: true, repeat: 1, ease: 'sine.inOut', transformOrigin: '50% 50%' }, '+=0.02');
+        } else {
+            entrada.to({}, { duration: 0.6 });
+        }
+        entrada.to(contenedor, { opacity: 0, duration: 0.5, ease: 'power1.inOut', onComplete: () => html.classList.remove('con-carga') }, '+=0.05');
     }
 
     entrada.addLabel('abrir', hayCarga ? '-=0.5' : 0);

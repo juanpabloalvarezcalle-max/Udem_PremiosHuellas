@@ -62,6 +62,9 @@
         return { svg: svg, trazos: lista };
     }
 
+    // La pantalla de carga de la portada (animaciones.js) reutiliza esta misma huella
+    window.HuellaTrofeo = { crear: huella };
+
     function velo(fondo) {
         var d = document.createElement('div');
         d.id = 'huella-velo';
