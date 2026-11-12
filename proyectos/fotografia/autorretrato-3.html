@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autorretrato | Premios Huella 2026</title>
+<link rel="icon" type="image/svg+xml" href="../../imgs/iconoNavegador.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../styles/style.css">
+<script src="../../scripts/integrantes.js" defer></script>
+<script src="../../scripts/vendor/animHuella.js"></script>
+</head>
+<body class="proyecto-pagina pagina--fotografia">
+
+<!-- Iconos reutilizables (usan currentColor, así se les cambia el color desde CSS) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<!-- Círculo con X (cerrar) -->
+<symbol id="icono-cerrar" viewBox="0 0 56 56">
+<circle cx="28" cy="28" r="22" fill="none" stroke="currentColor" stroke-width="3"/>
+<path d="M20 20l16 16M36 20L20 36" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+</symbol>
+<!-- Flecha larga hacia la derecha -->
+<symbol id="icono-flecha-larga" viewBox="0 0 56 32">
+<path d="M4 16h46M37 4l13 12-13 12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+</svg>
+
+<header class="ficha__cabecera">
+<a class="ficha__cerrar" href="../../docs/categorias/fotografia.html" aria-label="Cerrar y volver a Fotografía">
+<svg aria-hidden="true"><use href="#icono-cerrar"/></svg>
+</a>
+<span class="ficha__categoria">Fotografía</span>
+<h1 class="ficha__titulo">Autorretrato</h1>
+</header>
+
+<main class="ficha">
+
+<!-- Imagen del proyecto (esta categoría tiene una sola, así que no lleva carrusel) -->
+<figure class="ficha__galeria ficha__galeria--unica">
+<img class="galeria__imagen" src="../../imgs/proyectos/fotografia/autorretrato-3/autorretrato-3_02.webp" alt="Imagen del proyecto">
+</figure>
+
+<!-- Información del proyecto (pendiente: por ahora solo se conoce el nombre) -->
+<section class="ficha__info">
+<p class="ficha__etiqueta">Asignatura</p>
+<p class="ficha__dato">Fotografía</p>
+<hr class="ficha__linea">
+<p class="ficha__etiqueta">Docente</p>
+<p class="ficha__dato">Natalia Cadavid</p>
+<a class="ficha__boton" href="#" target="_blank" rel="noopener noreferrer">Abrir imagen original <svg aria-hidden="true"><use href="#icono-flecha-larga"/></svg></a>
+</section>
+
+<!-- Integrantes -->
+<section class="ficha__integrantes" aria-labelledby="integrantes-titulo">
+<h2 id="integrantes-titulo">Integrantes del proyecto</h2>
+<div class="integrantes" data-integrantes>
+<ul class="integrantes__lista">
+<li class="integrante">
+<img class="integrante__foto" src="../../imgs/nominado-no-foto.webp" alt="">
+<span class="integrante__nombre">Samuel Villa<br>Rodríguez</span>
+</li>
+</ul>
+<button class="integrantes__mas" type="button" aria-label="Ver más integrantes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+</div>
+</section>
+
+</main>
+
+</body>
+</html>
