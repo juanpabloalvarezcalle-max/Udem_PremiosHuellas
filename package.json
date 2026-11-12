@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "serve": "node tests/server.mjs",
-    "test": "playwright test"
+    "test": "playwright test",
+    "seo": "node tools/seo.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.65.0"

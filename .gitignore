@@ -14,3 +14,6 @@ test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
+
+# Copias locales generadas por Claude
+Claude outputs/

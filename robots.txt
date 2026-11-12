@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /tests/
+Disallow: /tools/
+
+Sitemap: https://nominadoshuella.netlify.app/sitemap.xml

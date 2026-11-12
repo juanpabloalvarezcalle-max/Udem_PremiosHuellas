@@ -127,3 +127,41 @@ test.describe('Ficha de proyecto: galería', () => {
     expect(fotos.every((l) => l === 'lazy')).toBe(true);
   });
 });
+
+/* ---------- SEO / Open Graph ---------- */
+
+const SITE_URL = 'https://nominadoshuella.netlify.app/';
+
+for (const pagina of paginas()) {
+  test(`${pagina} should have description, canonical and a reachable Open Graph image`, async ({ page, request }) => {
+    await page.goto(pagina);
+    const meta = async (sel) => page.locator(sel).first().getAttribute('content');
+
+    const descripcion = await meta('meta[name="description"]');
+    expect(descripcion?.length, 'description').toBeGreaterThan(30);
+    expect(descripcion.length, 'description <= 160').toBeLessThanOrEqual(160);
+    expect(await meta('meta[property="og:title"]')).toBeTruthy();
+    expect(await page.locator('link[rel="canonical"]').getAttribute('href')).toMatch(new RegExp(`^${SITE_URL}`));
+
+    // La imagen de vista previa debe existir: se traduce la URL pública a la del servidor de pruebas
+    const ogImage = await meta('meta[property="og:image"]');
+    expect(ogImage).toMatch(new RegExp(`^${SITE_URL}`));
+    const local = new URL(ogImage.slice(SITE_URL.length), new URL('/Udem_PremiosHuellas/', page.url())).href;
+    expect((await request.get(local)).status(), `og:image ${ogImage}`).toBe(200);
+  });
+}
+
+test('should list only existing pages in sitemap.xml', async ({ request, baseURL }) => {
+  const xml = await (await request.get('sitemap.xml')).text();
+  const urls = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  expect(urls.length).toBeGreaterThan(10);
+  for (const u of urls) {
+    expect(u.startsWith(SITE_URL)).toBe(true);
+    expect((await request.get(new URL(u.slice(SITE_URL.length), baseURL).href)).status(), u).toBe(200);
+  }
+});
+
+test('should point robots.txt to the sitemap', async ({ request }) => {
+  const txt = await (await request.get('robots.txt')).text();
+  expect(txt).toContain(`Sitemap: ${SITE_URL}sitemap.xml`);
+});
