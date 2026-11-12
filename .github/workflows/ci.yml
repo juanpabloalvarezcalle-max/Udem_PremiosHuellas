@@ -1,9 +1,9 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
+  push:            # cualquier rama (main, Alex-QA, DevPablo, ...)
   pull_request:
+  workflow_dispatch: # botón "Run workflow" en la pestaña Actions
 
 concurrency:
   group: ci-${{ github.ref }}
