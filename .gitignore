@@ -1,0 +1,16 @@
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# Node / pruebas
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
